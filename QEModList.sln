@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31613.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QEModList", "QEModList\QEModList.csproj", "{638E74DC-6F76-4E1F-9582-AEB00672B45A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QEModListCore", "QEModListCore\QEModListCore.csproj", "{AD05B8E8-4216-430E-A3B4-EBBEC4FB7085}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{638E74DC-6F76-4E1F-9582-AEB00672B45A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{638E74DC-6F76-4E1F-9582-AEB00672B45A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{638E74DC-6F76-4E1F-9582-AEB00672B45A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{638E74DC-6F76-4E1F-9582-AEB00672B45A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD05B8E8-4216-430E-A3B4-EBBEC4FB7085}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD05B8E8-4216-430E-A3B4-EBBEC4FB7085}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD05B8E8-4216-430E-A3B4-EBBEC4FB7085}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD05B8E8-4216-430E-A3B4-EBBEC4FB7085}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8966560F-22E8-4DC9-9E90-6E13AAF09171}
+	EndGlobalSection
+EndGlobal
