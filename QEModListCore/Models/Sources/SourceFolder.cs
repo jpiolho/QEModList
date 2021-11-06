@@ -11,16 +11,6 @@ namespace QEModList.Core.Models.Sources
 {
     public class SourceFolder : Source
     {
-        public class Manifest
-        {
-            public string Name { get; set; }
-            public string Author { get; set; }
-            public string Date { get; set; }
-            public string Description { get; set; }
-            public string Gamedir { get; set; }
-            public List<string> Screenshots { get; set; }
-        }
-
         public string Path { get; set; }
 
         public override async Task<List<Addon>> GetAddonsAsync(CancellationToken cancellationToken)
@@ -41,8 +31,8 @@ namespace QEModList.Core.Models.Sources
                 },
                 Gamedir = !string.IsNullOrEmpty(manifest.Gamedir) ? manifest.Gamedir : System.IO.Path.GetFileName(Path),
                 Id = System.IO.Path.GetFileName(Path),
-                Download = "null.pak",
-                Size = 0,
+                Download = manifest.Download,
+                Size = manifest.Size,
                 Screenshots = manifest.Screenshots
             };
 
