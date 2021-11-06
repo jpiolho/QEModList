@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <None Update="icon.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="sources.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
