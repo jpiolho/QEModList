@@ -50,21 +50,43 @@ namespace QEModList.Core.Services
 
             async Task AddSourceToList(int sourceId)
             {
-                var addons = await sources[sourceId].GetAddonsAsync(cancellationToken);
-
-                foreach(var addon in addons)
+                try
                 {
-                    for(var i = 0; i < addon.Screenshots.Count; i++)
-                        addon.Screenshots[i] = $"{sourceId}__{addon.Screenshots[i]}";
+                    var source = sources[sourceId];
+                    var addons = await source.GetAddonsAsync(cancellationToken);
 
-                    addon.Download = $"{sourceId}__{addon.Download}";
-                    addon.Id = $"{addon.Gamedir}";
+                    foreach (var addon in addons)
+                    {
+                        for (var i = 0; i < addon.Screenshots.Count; i++)
+                            addon.Screenshots[i] = $"{sourceId}__{addon.Screenshots[i]}";
+
+                        addon.Download = $"{sourceId}__{addon.Download}";
+                        addon.Id = $"{addon.Gamedir}";
+                    }
+
+                    using (await listLock.LockAsync(cancellationToken))
+                    {
+                        /*
+                        list.Addons.Add(new Addon()
+                        {
+                            Name = $"---------",
+                            Author = "",
+                            Date = "",
+                            Description = new() { { "en", "This is just a separator. Ignore" } },
+                            Download = "empty.pak",
+                            Gamedir = "_separator",
+                            Id = "__modchanger",
+                            Size = 12
+                        });
+                        */
+                        list.Addons.AddRange(addons);
+                    }
                 }
+                catch(Exception ex)
+                {
 
-                using (await listLock.LockAsync(cancellationToken))
-                    list.Addons.AddRange(addons);
+                }
             }
-
 
             var tasks = new List<Task>(sources.Count);
             for(var i=0;i<sources.Count;i++)
