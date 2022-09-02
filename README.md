@@ -5,7 +5,7 @@ A server / program to easily load third-party mods into Quake Enhanced addons li
 This program is still in alpha, so very likely there is issues.
 
 ## Requirements
-* .NET 5.0 Windows Desktop Runtime
+* .NET 6.0 Windows Desktop Runtime
 * Port 80 available for hosting
 
 ## How to install
@@ -24,3 +24,25 @@ This 'Mod Loader' mod is a dummy mod that helps you to load these mods.
 4. Re-download it
 5. Activate it
 6. Done!
+
+## Source.json
+
+This json contains a list of all the addon sources it should include in the mod list. The following sources are supported:
+* Github
+* Addons List
+* Folder
+
+### Example file
+```json
+{
+  "version": 1,
+  "sources": [
+    [ "ADDONLIST", "https://mods.silver.idtech.services/" ],
+    [ "ADDONLIST", "https://q1mods.xyz" ],
+    [ "GITHUB", "https://github.com/jpiolho/QECTF/" ],
+    [ "GITHUB", "https://github.com/jpiolho/QERocketOnly/" ],
+    [ "GITHUB", "https://github.com/jpiolho/QENightmarePlus/" ],
+    [ "GITHUB", "https://github.com/jpiolho/QEArmsRace/" ]
+  ]
+}
+```
