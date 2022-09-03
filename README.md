@@ -1,19 +1,31 @@
 # QEModList
 A server / program to easily load third-party mods into Quake Enhanced addons list
 
-## Warning
-This program is still in alpha, so very likely there is issues.
-
 ## Requirements
-* .NET 6.0 Windows Desktop Runtime
-* Port 80 available for hosting
+* [.NET 6.0 Windows Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime)
+* Port 80 available for localhost hosting
 
 ## How to install
 1. Extract the zip to a folder.
 2. Run the program
-3. In your tray, you'll find an icon. Right-click and edit the sources to your liking
-4. Start Quake with the command line `+ui_addonsBaseURL "http://localhost/"` **OR** When Quake starts, before you open the Addon's page, type in the console: `ui_addonsBaseURL "http://localhost/"`
+3. In your tray, you'll find the application icon.
+
+   <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/tray.webp?raw=true" width="256" />
+4. Right-click it and customize the "Sources"
+   
+   <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/sources.webp?raw=true" width="256" />
+4. Start Quake with the command line `+ui_addonsBaseURL "http://localhost/"`
+
+   **ALTERNATIVELY** When Quake starts, before you open the Addon's page, type in the console: `ui_addonsBaseURL "http://localhost/"`
+   
+   <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/arguments.webp?raw=true" width="256" />
+
 5. Open the addons menu in-game
+   
+   <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/addons.webp?raw=true" width="256" />
+   
+## Known issues
+* Quake currently doesn't like when there's too many addons in the list and you might not be able to click "Download" and "Activate" buttons.
 
 ## What is the mod loader mod?
 When running crossplay mods that use the 'id1' folder, they're always "Active" as far as the game is concerned.
