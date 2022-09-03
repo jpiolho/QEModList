@@ -27,11 +27,9 @@ namespace QEModList.Core.Services
         }
 
 
-
-        public async Task RefreshAsync(CancellationToken cancellationToken)
+        public async Task RefreshAsync(Action<int,int> progressCallback, CancellationToken cancellationToken)
         {
-            var sources = await _sourcesListLoader.LoadAsync(cancellationToken);
-
+            var sources = _sources;
 
             var list = new AddonList();
 
@@ -48,6 +46,9 @@ namespace QEModList.Core.Services
 
             var listLock = new AsyncLock();
 
+            int totalSources = sources.Count;
+            int totalSourcesDone = 0;
+
             async Task AddSourceToList(int sourceId)
             {
                 try
@@ -55,13 +56,15 @@ namespace QEModList.Core.Services
                     var source = sources[sourceId];
                     var addons = await source.GetAddonsAsync(cancellationToken);
 
-                    foreach (var addon in addons)
+                    for (int aid = 0; aid < addons.Count; aid++)
                     {
+                        Addon addon = addons[aid];
+
                         for (var i = 0; i < addon.Screenshots.Count; i++)
                             addon.Screenshots[i] = $"{sourceId}__{addon.Screenshots[i]}";
 
-                        addon.Download = $"{sourceId}__{addon.Download}";
-                        addon.Id = $"{addon.Gamedir}";
+                        addon.Download = $"{sourceId}__{addon.Download.Replace("/",":").Replace("\\",":")}";
+                        addon.Id = $"{addon.Id}";
                     }
 
                     using (await listLock.LockAsync(cancellationToken))
@@ -81,11 +84,14 @@ namespace QEModList.Core.Services
                         */
                         list.Addons.AddRange(addons);
                     }
+
                 }
                 catch(Exception ex)
                 {
-
+                    ;
                 }
+                
+                progressCallback?.Invoke(Interlocked.Increment(ref totalSourcesDone),totalSources);
             }
 
             var tasks = new List<Task>(sources.Count);
@@ -94,13 +100,14 @@ namespace QEModList.Core.Services
 
             await Task.WhenAll(tasks);
 
-            Interlocked.Exchange(ref _sources, sources);
             Interlocked.Exchange(ref _list, list);
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await RefreshAsync(cancellationToken);
+            _sources = await _sourcesListLoader.LoadAsync(cancellationToken);
+
+            await RefreshAsync(null,cancellationToken);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

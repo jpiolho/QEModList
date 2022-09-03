@@ -3,6 +3,7 @@ using QEModList.Core.Models.Sources;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,14 +50,23 @@ namespace QEModList.Core.Services
                 switch (sourceType.ToUpperInvariant())
                 {
                     default: throw new InvalidDataException($"Unknown source type: {sourceType}");
-                    case "ADDONLIST": sources.Add(new SourceAddonList() { BaseUrl = new Uri(sourcePath) }); break;
-                    case "GITHUB": sources.Add(new SourceGithub() { Url = new Uri(sourcePath) }); break;
-                    case "FOLDER": sources.Add(new SourceFolder() { Path = sourcePath }); break;
+                    case SourceAddonList.Type: sources.Add(new SourceAddonList() { BaseUrl = new Uri(sourcePath) }); break;
+                    case SourceGithub.Type: sources.Add(new SourceGithub() { Url = new Uri(sourcePath) }); break;
+                    case SourceFolder.Type: sources.Add(new SourceFolder() { Path = sourcePath }); break;
                 }
             }
 
 
             return sources;
+        }
+
+        public async Task SaveAsync(IEnumerable<Source> sources, CancellationToken cancellationToken)
+        {
+            await File.WriteAllTextAsync(Filename, JsonSerializer.Serialize(new
+            {
+                Version = 1,
+                Sources = sources.Select(s => new string[] { s.TypeName, s.SourceValue })
+            }, QEModListServer.JsonSerializerOptions));
         }
     }
 }

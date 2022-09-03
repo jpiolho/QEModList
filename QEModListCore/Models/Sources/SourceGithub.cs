@@ -13,14 +13,24 @@ namespace QEModList.Core.Models.Sources
 {
     public class SourceGithub : Source
     {
+        public const string Type = "GITHUB";
 
         public Uri Url { get; set; }
-
+        public override string SourceValue { get => Url.ToString(); set => Url = new Uri(value); }
+        public override string TypeName => Type;
 
         private Manifest _manifest;
         private string _versionTag;
 
-
+        public override object Clone()
+        {
+            return new SourceGithub()
+            {
+                Url = Url,
+                _manifest = _manifest,
+                _versionTag = _versionTag
+            };
+        }
 
         public override async Task<List<Addon>> GetAddonsAsync(CancellationToken cancellationToken)
         {

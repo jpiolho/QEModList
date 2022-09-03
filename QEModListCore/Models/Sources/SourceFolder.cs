@@ -11,7 +11,19 @@ namespace QEModList.Core.Models.Sources
 {
     public class SourceFolder : Source
     {
+        public const string Type = "FOLDER";
+
         public string Path { get; set; }
+        public override string SourceValue { get => Path; set => Path = value; }
+        public override string TypeName => Type;
+
+        public override object Clone()
+        {
+            return new SourceFolder()
+            {
+                Path = Path
+            };
+        }
 
         public override async Task<List<Addon>> GetAddonsAsync(CancellationToken cancellationToken)
         {

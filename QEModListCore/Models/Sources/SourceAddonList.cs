@@ -12,11 +12,20 @@ namespace QEModList.Core.Models.Sources
 {
     public class SourceAddonList : Source
     {
+        public const string Type = "ADDONLIST";
         private const string ContentJsonFile = "content.json";
 
         public Uri BaseUrl { get; set; }
+        public override string SourceValue { get => BaseUrl.ToString(); set => BaseUrl = new Uri(value); }
+        public override string TypeName => Type;
 
-  
+        public override object Clone()
+        {
+            return new SourceAddonList()
+            {
+                BaseUrl = BaseUrl
+            };
+        }
 
         public override async Task<List<Addon>> GetAddonsAsync(CancellationToken cancellationToken)
         {
@@ -29,8 +38,9 @@ namespace QEModList.Core.Models.Sources
                 throw new Exception($"Unsuccessful status code from '{uri}': {response.StatusCode}");
 
             
-            var stream = await response.Content.ReadAsStreamAsync();
-            var list = await JsonSerializer.DeserializeAsync<AddonList>(stream, QEModListServer.JsonSerializerOptions);
+            var rawJson = await response.Content.ReadAsStringAsync();
+
+            var list = JsonSerializer.Deserialize<AddonList>(SanitizeJson(rawJson), QEModListServer.JsonSerializerOptions);
             return list.Addons;
         }
 
@@ -38,8 +48,58 @@ namespace QEModList.Core.Models.Sources
         {
             using var client = new HttpClient();
 
-            var uri = new Uri(BaseUrl, path);
+            var uri = new Uri(BaseUrl, path.Replace(":","/"));
             return await client.GetStreamAsync(uri,cancellationToken);
+        }
+
+
+        private static string SanitizeJson(string json)
+        {
+            var sb = new StringBuilder();
+
+            bool inQuote = false;
+            bool escape = false;
+            bool replaced;
+            for (var i = 0; i < json.Length; i++)
+            {
+                var c = json[i];
+
+                replaced = false;
+
+                if (!escape)
+                {
+                    if (c == '\\')
+                    {
+                        escape = true;
+                    }
+                    else if (c == '"')
+                    {
+                        inQuote = !inQuote;
+                    }
+                    else if (inQuote)
+                    {
+                        if (c == '\r')
+                        {
+                            sb.Append("\\r");
+                            replaced = true;
+                        }
+                        else if (c == '\n')
+                        {
+                            sb.Append("\\n");
+                            replaced = true;
+                        }
+                    }
+                }
+                else
+                {
+                    escape = false;
+                }
+
+                if (!replaced)
+                    sb.Append(c);
+            }
+
+            return sb.ToString();
         }
     }
 }

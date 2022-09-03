@@ -7,24 +7,36 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using QEModList.Core.Services;
 using System;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace QEModList.Core
 {
+
+
     public class QEModListServer
     {
         internal static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            ReadCommentHandling = JsonCommentHandling.Skip
+            PropertyNameCaseInsensitive = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            AllowTrailingCommas = true
         };
 
         private WebApplication? _app;
+        public AddonsRepository? AddonsRepository => _app?.Services.GetRequiredService<AddonsRepository>();
+        public SourcesListLoader? SourcesListLoader => _app?.Services.GetRequiredService<SourcesListLoader>();
+
+        public bool IsRunning { get; private set; }
+
 
         public async Task RunAsync(CancellationToken cancellationToken = default)
         {
+
             var builder = WebApplication.CreateBuilder();
             builder.Host.UseConsoleLifetime();
 
@@ -39,12 +51,15 @@ namespace QEModList.Core
             _app.MapGet("/empty.pak", GetEmptyPakAsync);
             _app.MapGet("/{file}", GetFileAsync);
 
+            IsRunning = true;
             await _app.RunAsync("http://127.0.0.1:80");
         }
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             if (_app is not null)
                 await _app.StopAsync(cancellationToken);
+
+            IsRunning = false;
         }
 
 
@@ -78,12 +93,35 @@ namespace QEModList.Core
         {
             var repo = _app.Services.GetRequiredService<AddonsRepository>();
 
-            return Task.FromResult(Results.Ok(repo.List));
+            var json = SerializeAddonListToQEJson(repo.List);
+
+            return Task.FromResult(Results.Text(json, "application/json"));
         }
 
         private Task<IResult> GetEmptyPakAsync()
         {
             return Task.FromResult(Results.File(Convert.FromBase64String("UEFDSwwAAAAAAAAA"), "application/octet-stream"));
+        }
+
+
+
+
+        private static JsonSerializerOptions listSerializationOptions = new JsonSerializerOptions()
+        {
+            WriteIndented = false,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+        private static string SerializeAddonListToQEJson(Models.AddonList list)
+        {
+            var json = JsonSerializer.Serialize(list, listSerializationOptions);
+
+            // Support new lines
+            var sb = new StringBuilder(json);
+            sb.Replace("\\r", "\r");
+            sb.Replace("\\n", "\n");
+
+            return sb.ToString();
         }
     }
 }

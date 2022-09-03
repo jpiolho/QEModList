@@ -37,30 +37,35 @@ namespace QEModList
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(12, 27);
+            this.progressBar.Location = new System.Drawing.Point(14, 36);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(776, 23);
+            this.progressBar.Size = new System.Drawing.Size(887, 31);
             this.progressBar.TabIndex = 0;
             // 
             // labelTitle
             // 
             this.labelTitle.AutoSize = true;
-            this.labelTitle.Location = new System.Drawing.Point(12, 9);
+            this.labelTitle.Location = new System.Drawing.Point(14, 12);
             this.labelTitle.Name = "labelTitle";
-            this.labelTitle.Size = new System.Drawing.Size(38, 15);
+            this.labelTitle.Size = new System.Drawing.Size(211, 20);
             this.labelTitle.TabIndex = 1;
-            this.labelTitle.Text = "label1";
+            this.labelTitle.Text = "Refreshing mods, please wait...";
             // 
             // FormRefreshMods
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 59);
+            this.ClientSize = new System.Drawing.Size(914, 79);
             this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.progressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormRefreshMods";
-            this.Text = "FormRefreshMods";
+            this.Text = "QEModList";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormRefreshMods_FormClosing);
             this.Load += new System.EventHandler(this.FormRefreshMods_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

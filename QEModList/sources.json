@@ -1,11 +1,6 @@
 {
   "version": 1,
   "sources": [
-    [ "ADDONLIST", "https://mods.silver.idtech.services/" ],
-    [ "GITHUB", "https://github.com/jpiolho/QECTF/" ],
-    [ "GITHUB", "https://github.com/jpiolho/QERocketOnly/" ],
-    [ "GITHUB", "https://github.com/jpiolho/QENightmarePlus/" ],
-    [ "GITHUB", "https://github.com/jpiolho/QEArmsRace/" ]
-    //"ADDONLIST:https://q1mods.xyz"
+    [ "ADDONLIST", "https://mods.silver.idtech.services/" ]
   ]
 }
