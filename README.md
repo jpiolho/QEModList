@@ -9,11 +9,11 @@ This program is still in alpha, so very likely there is issues.
 * Port 80 available for hosting
 
 ## How to install
-1. Extract .exe to a folder.
-2. Place sources.json in the same folder.
-3. Edit sources.json to your liking
+1. Extract the zip to a folder.
+2. Run the program
+3. In your tray, you'll find an icon. Right-click and edit the sources to your liking
 4. Start Quake with the command line `+ui_addonsBaseURL "http://localhost/"` **OR** When Quake starts, before you open the Addon's page, type in the console: `ui_addonsBaseURL "http://localhost/"`
-5. Open the addons page
+5. Open the addons menu in-game
 
 ## What is the mod loader mod?
 When running crossplay mods that use the 'id1' folder, they're always "Active" as far as the game is concerned.
