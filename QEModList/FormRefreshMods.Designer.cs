@@ -29,6 +29,7 @@ namespace QEModList
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRefreshMods));
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.labelTitle = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -60,6 +61,7 @@ namespace QEModList
             this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.progressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

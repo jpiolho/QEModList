@@ -22,10 +22,26 @@ namespace QEModList.Core.Services
             public List<string[]> Sources { get; set; }
         }
 
+
+        private static readonly List<Source> DefaultSources = new List<Source>(new SourceAddonList[]
+        {
+            new SourceAddonList() { SourceValue = "https://mods.silver.idtech.services/" }
+        });
+
         private const string Filename = "sources.json";
 
+        private string GetSourcesPath()
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JPiolho", "QEModList");
+            return Path.Combine(path, Filename);
+        }
+        
         public async Task<List<Source>> LoadAsync(CancellationToken cancellationToken)
         {
+            var path = GetSourcesPath();
+            if (!File.Exists(path))
+                return DefaultSources;
+
             // Read file
             var json = await File.ReadAllTextAsync(Filename, cancellationToken);
 
@@ -62,7 +78,10 @@ namespace QEModList.Core.Services
 
         public async Task SaveAsync(IEnumerable<Source> sources, CancellationToken cancellationToken)
         {
-            await File.WriteAllTextAsync(Filename, JsonSerializer.Serialize(new
+            var path = GetSourcesPath();
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+
+            await File.WriteAllTextAsync(path, JsonSerializer.Serialize(new
             {
                 Version = 1,
                 Sources = sources.Select(s => new string[] { s.TypeName, s.SourceValue })
