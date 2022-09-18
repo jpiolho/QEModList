@@ -39,5 +39,3 @@ This 'Mod Loader' mod is a dummy mod that helps you to load these mods.
 
 ## Where can I find the sources and options configuration files?
 You'll find them at `%appdata%\jpiolho\qemodlist`
-
-This json contai
