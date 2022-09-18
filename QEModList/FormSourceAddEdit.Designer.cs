@@ -59,6 +59,7 @@
             // 
             this.comboBoxSourceType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxSourceType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSourceType.FormattingEnabled = true;
             this.comboBoxSourceType.Location = new System.Drawing.Point(90, 12);
             this.comboBoxSourceType.Name = "comboBoxSourceType";

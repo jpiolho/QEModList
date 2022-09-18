@@ -47,11 +47,11 @@ namespace QEModList
             // labelTitle
             // 
             this.labelTitle.AutoSize = true;
-            this.labelTitle.Location = new System.Drawing.Point(14, 12);
+            this.labelTitle.Location = new System.Drawing.Point(14, 9);
             this.labelTitle.Name = "labelTitle";
-            this.labelTitle.Size = new System.Drawing.Size(211, 20);
+            this.labelTitle.Size = new System.Drawing.Size(276, 20);
             this.labelTitle.TabIndex = 1;
-            this.labelTitle.Text = "Refreshing mods, please wait...";
+            this.labelTitle.Text = "Refreshing addons sources, please wait...";
             // 
             // FormRefreshMods
             // 

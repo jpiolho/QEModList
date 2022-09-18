@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,9 +15,18 @@ namespace QEModList
 {
     class Program
     {
+        private static JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions()
+        {
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
         public static QEModListServer Server { get; private set; }
         private static Task _serverTask;
         private static NotifyIcon _notifyIcon;
+        private static Options _options = new Options();
 
         [DllImport("shcore.dll")]
         static extern int SetProcessDpiAwareness(int value);
@@ -26,11 +36,15 @@ namespace QEModList
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        public static void Main()
+        public static async Task Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(true);
 
+            await LoadOptionsAsync();
+
+            if (_options.RefreshLocalAddons)
+                RefreshLocalAddons();
 
             SetupNotifyIcon();
             SetupListServer();
@@ -41,9 +55,29 @@ namespace QEModList
             }
             finally
             {
-                TerminateListServerAsync().GetAwaiter().GetResult();
+                await TerminateListServerAsync();
                 _notifyIcon.Visible = false;
             }
+        }
+
+
+        private static async Task LoadOptionsAsync()
+        {
+            var path = Path.Combine(QEModListPaths.GetProgramAppDataFolder(), "options.json");
+
+            if (!File.Exists(path))
+                return;
+
+            _options = JsonSerializer.Deserialize<Options>(await File.ReadAllTextAsync(path),JsonSerializerOptions);
+        }
+
+        private static async Task SaveOptionsAsync()
+        {
+            var path = Path.Combine(QEModListPaths.GetProgramAppDataFolder(), "options.json");
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+
+            await File.WriteAllTextAsync(path, JsonSerializer.Serialize(_options, JsonSerializerOptions));
         }
 
         private static async Task TerminateListServerAsync()
@@ -61,13 +95,15 @@ namespace QEModList
         private static void SetupNotifyIcon()
         {
             var contextMenu = new ContextMenuStrip();
-            contextMenu.Items.Add("Sources...").Click += ContextMenu_Sources_OnClick;
-            contextMenu.Items.Add("Refresh mods...").Click += ContextMenu_Refresh_OnClick;
+            contextMenu.Items.Add("Sources...").Click += (_, _) => new FormSources().ShowDialog();
+            contextMenu.Items.Add("Refresh addons sources...").Click += (_,_) => new FormRefreshMods().ShowDialog();
+            contextMenu.Items.Add(new ToolStripSeparator());
+            contextMenu.Items.Add("Options...").Click += ContextMenu_Options_OnClick;
             contextMenu.Items.Add(new ToolStripSeparator());
             contextMenu.Items.Add("Launch quake").Click += ContextMenu_LaunchQuake_OnClick;
-            contextMenu.Items.Add("Delete addons.json").Click += ContextMenu_DeleteAddonsJson_OnClick;
+            contextMenu.Items.Add("Refresh local addons").Click += (_,_) => RefreshLocalAddons();
             contextMenu.Items.Add(new ToolStripSeparator());
-            contextMenu.Items.Add("Exit").Click += ContextMenu_Exit_OnClick;
+            contextMenu.Items.Add("Exit").Click += (_,_) => Application.Exit();
 
             var notifyIcon = _notifyIcon = new NotifyIcon();
             notifyIcon.Icon = Resources.Icon;
@@ -75,7 +111,8 @@ namespace QEModList
             notifyIcon.Visible = true;
             notifyIcon.ContextMenuStrip = contextMenu;
         }
-        private static void ContextMenu_DeleteAddonsJson_OnClick(object sender, EventArgs e)
+
+        private static void RefreshLocalAddons()
         {
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Saved Games", "Nightdive Studios", "Quake");
 
@@ -87,45 +124,48 @@ namespace QEModList
 
             path = Path.Combine(path, "addons.json");
 
-            if(File.Exists(path))
+            if (File.Exists(path))
                 File.Delete(path);
         }
 
         private static async void ContextMenu_LaunchQuake_OnClick(object sender, EventArgs e)
         {
-            var steamQuakePath = GetQuakeSteamInstallPath();
+            string path = _options.QuakeLaunchPath;
 
-            if(steamQuakePath is null)
+            if (_options.QuakeLaunchPath == "STEAM")
             {
-                MessageBox.Show("Could not find quake steam install path", "Failed to start quake", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                var steamQuakePath = GetQuakeSteamInstallPath();
+
+                if (steamQuakePath is null)
+                {
+                    MessageBox.Show("Could not find quake steam install path", "Failed to start quake", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                path = Path.Combine(steamQuakePath, "Quake_x64_steam.exe");
+                var steamappIdPath = Path.Combine(Path.GetDirectoryName(path), "steam_appid.txt");
+
+                if (!File.Exists(steamappIdPath))
+                    await File.WriteAllTextAsync(steamappIdPath, "2310");
             }
 
-            var path = Path.Combine(steamQuakePath, "Quake_x64_steam.exe");
-            var steamappIdPath = Path.Combine(Path.GetDirectoryName(path), "steam_appid.txt");
+            Process.Start(path, $"{_options.QuakeLaunchArguments} +ui_addonsBaseURL \"http://localhost/\"");
 
-            if (!File.Exists(steamappIdPath))
-                await File.WriteAllTextAsync(steamappIdPath, "2310");
-
-            Process.Start(path, "+ui_addonsBaseURL \"localhost\"");
+            if (_options.RefreshLocalAddons)
+                RefreshLocalAddons();
         }
 
-        private static async void ContextMenu_Refresh_OnClick(object sender, EventArgs e)
+
+        private static async void ContextMenu_Options_OnClick(object sender, EventArgs e)
         {
-            new FormRefreshMods().ShowDialog();
-        }
+            var form = new FormOptions(_options);
 
-        private static async void ContextMenu_Sources_OnClick(object sender, EventArgs e)
-        {
-            var form = new FormSources();
-            form.ShowDialog();
-        }
+            if (form.ShowDialog() != DialogResult.OK)
+                return;
 
-        private static void ContextMenu_Exit_OnClick(object sender, EventArgs e)
-        {
-            Application.Exit();
+            _options = form.DialogResultOptions;
+            await SaveOptionsAsync();
         }
-
 
         private static string GetQuakeSteamInstallPath()
         {

@@ -32,8 +32,7 @@ namespace QEModList.Core.Services
 
         private string GetSourcesPath()
         {
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JPiolho", "QEModList");
-            return Path.Combine(path, Filename);
+            return Path.Combine(QEModListPaths.GetProgramAppDataFolder(), Filename);
         }
         
         public async Task<List<Source>> LoadAsync(CancellationToken cancellationToken)
@@ -43,7 +42,7 @@ namespace QEModList.Core.Services
                 return DefaultSources;
 
             // Read file
-            var json = await File.ReadAllTextAsync(Filename, cancellationToken);
+            var json = await File.ReadAllTextAsync(path, cancellationToken);
 
             // Parse header & compare version
             var header = JsonSerializer.Deserialize<SourcesListHeader>(json, QEModListServer.JsonSerializerOptions);
