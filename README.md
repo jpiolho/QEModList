@@ -1,31 +1,31 @@
 # QEModList
 A server / program to easily load third-party mods into Quake Enhanced addons list
 
-## Requirements
-* [.NET 6.0 Windows Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime)
-* Port 80 available for localhost hosting
-
 ## How to install
-1. Extract the zip to a folder.
-2. Run the program
-3. In your tray, you'll find the application icon.
+1. Go over to the [releases page](https://github.com/jpiolho/QEModList/releases/)
+2. Download latest setup & install
+3. Start application
+   
+   <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/startmenu.webp?raw=true" width="256" />
+4. In your tray, you'll find the application icon.
 
    <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/tray.webp?raw=true" width="256" />
-4. Right-click it and customize the "Sources"
+5. Right-click it and customize the "Sources"
    
    <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/sources.webp?raw=true" width="256" />
-4. Start Quake with the command line `+ui_addonsBaseURL "http://localhost/"`
+6. Right-click the tray icon again and press "Launch Quake"
 
-   **ALTERNATIVELY** When Quake starts, before you open the Addon's page, type in the console: `ui_addonsBaseURL "http://localhost/"`
-   
-   <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/arguments.webp?raw=true" width="256" />
-
-5. Open the addons menu in-game
+   <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/menu.webp?raw=true" width="256" />
+7. Open the addons menu in-game
    
    <img src="https://github.com/jpiolho/QEModList/blob/master/docs/images/addons.webp?raw=true" width="256" />
    
 ## Known issues
 * Quake currently doesn't like when there's too many addons in the list and you might not be able to click "Download" and "Activate" buttons.
+
+## Requirements
+* [.NET 6.0 Windows Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime) (The setup should install this automatically)
+* Port 80 available for localhost hosting
 
 ## What is the mod loader mod?
 When running crossplay mods that use the 'id1' folder, they're always "Active" as far as the game is concerned.
@@ -37,24 +37,7 @@ This 'Mod Loader' mod is a dummy mod that helps you to load these mods.
 5. Activate it
 6. Done!
 
-## Source.json
+## Where can I find the sources and options configuration files?
+You'll find them at `%appdata%\jpiolho\qemodlist`
 
-This json contains a list of all the addon sources it should include in the mod list. The following sources are supported:
-* Github
-* Addons List
-* Folder
-
-### Example file
-```json
-{
-  "version": 1,
-  "sources": [
-    [ "ADDONLIST", "https://mods.silver.idtech.services/" ],
-    [ "ADDONLIST", "https://q1mods.xyz" ],
-    [ "GITHUB", "https://github.com/jpiolho/QECTF/" ],
-    [ "GITHUB", "https://github.com/jpiolho/QERocketOnly/" ],
-    [ "GITHUB", "https://github.com/jpiolho/QENightmarePlus/" ],
-    [ "GITHUB", "https://github.com/jpiolho/QEArmsRace/" ]
-  ]
-}
-```
+This json contai
